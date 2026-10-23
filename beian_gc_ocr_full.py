@@ -14,7 +14,7 @@
 """
 import os, sys, glob, json, time
 
-ROOT = r'V:\2、合同类归档\1、新大陆测绘合同归档'
+ROOT = r'<ENG_CONTRACT_SRC_ROOT>'
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, '_gc_ocr_pages.json')
 DPI = int(os.environ.get('GC_OCR_DPI', '150'))

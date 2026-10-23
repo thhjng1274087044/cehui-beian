@@ -18,7 +18,7 @@ DEPLOY_ROOT = os.path.dirname(os.path.abspath(__file__))
 # ---- 默认值（= 原开发机上的取值；服务器上通过 config.json 覆盖）----
 _DEFAULTS = {
     # 数据源根（网络盘，可选；离线包用缓存即可，无需此盘）
-    "root": r"W:/2020备案",
+    "root": r"<HOUSE_SRC_ROOT>",
 
     # 台账 / Excel 输出（相对部署根）
     "ledger": "beian_records.json",
@@ -39,9 +39,9 @@ _DEFAULTS = {
 
     # 各年数据源根（仅当服务器能挂 W: 重新提取时才用；离线包可忽略）
     "year_roots": [
-        r"W:/2020备案/2024年备案",
-        r"W:/2020备案/2025年备案",
-        r"W:/2020备案/2026年备案",
+        r"<HOUSE_SRC_ROOT>/2024年备案",
+        r"<HOUSE_SRC_ROOT>/2025年备案",
+        r"<HOUSE_SRC_ROOT>/2026年备案",
     ],
 
     # 台账 JSON 里写死的「旧缓存绝对路径」前缀；部署后会自动翻译成上面的 cache。

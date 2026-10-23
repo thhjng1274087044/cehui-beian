@@ -36,7 +36,7 @@ from openpyxl import Workbook
 import beian_config as _cfg
 
 # 数据源根（部署时由 config.json 的 "root" 覆盖；离线包用缓存即可，无需此盘）
-ROOT    = _cfg.CFG.get("root", r"W:/2020备案")
+ROOT    = _cfg.CFG.get("root", r"<HOUSE_SRC_ROOT>")
 # 台账 / Excel / 缓存：全部来自 config，自动相对部署根解析
 LEDGER = _cfg.LEDGER_PATH
 XLSX   = _cfg.XLSX_PATH

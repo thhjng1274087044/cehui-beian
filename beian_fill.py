@@ -52,7 +52,7 @@ BASE_URL = "https://hyjg.zrzyt.zj.gov.cn/mapping/project/baseInfo/baseInfoRecord
 TEST_RECORD_KEY = "CX202402007"   # 试点用测试报告编号
 
 # 测试数据路径（部署时通过 config.json 的 test_pdf_dir 覆盖；此处为占位示例）
-TEST_PDF_DIR = _cfg.CFG.get("test_pdf_dir", r"<示例: W:/2020备案/YYYY年备案/M月份/F# 地点/人名/文件名>")
+TEST_PDF_DIR = _cfg.CFG.get("test_pdf_dir", r"<示例: <HOUSE_SRC_ROOT>/YYYY年备案/M月份/F# 地点/人名/文件名>")
 
 # 用户确认：已在「项目信息查询」正式库、无需再报的委托方名单
 SKIP_NAMES_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "beian_skip_names.json")
@@ -1494,7 +1494,7 @@ def count_uploaded_same_project(ledger: dict, uploaded: dict, project_name: str)
 #  CLI 入口
 # ================================================================
 def load_test_record():
-    """加载邵来福的测试记录。"""
+    """加载<SAMPLE_CLIENT_A>的测试记录。"""
     ledger = json.load(open(L.LEDGER, encoding="utf-8"))
     key = TEST_RECORD_KEY
     if key not in ledger:
@@ -1512,9 +1512,9 @@ def load_test_record():
 
 CONTRACT_FIX_LOG = os.path.join(os.path.dirname(os.path.abspath(__file__)), "beian_contract_fix_log.json")
 YEAR_ROOTS = tuple(_cfg.CFG.get("year_roots", [
-    r"W:/2020备案/2024年备案",
-    r"W:/2020备案/2025年备案",
-    r"W:/2020备案/2026年备案",
+    r"<HOUSE_SRC_ROOT>/2024年备案",
+    r"<HOUSE_SRC_ROOT>/2025年备案",
+    r"<HOUSE_SRC_ROOT>/2026年备案",
 ]))
 
 
@@ -1898,7 +1898,7 @@ def main():
                     "state": "interrupted",
                 })
         else:
-            # 单条测试（默认邵来福）
+            # 单条测试（默认<SAMPLE_CLIENT_A>）
             rec = load_test_record()
             pdf, contracts = find_pdf_and_contracts(rec)
             log.info(f"测试记录: {rec['_key']} | PDF: {pdf} | 合同: {contracts}")

@@ -11,8 +11,8 @@
   status         : 上传进程写入  pending / done / failed
 
 用法:
-  python beian_extract_worker.py --root "W:/2020备案"        # 单次全量扫描
-  python beian_extract_worker.py --root "W:/2020备案" --loop # 持续轮询新文件
+  python beian_extract_worker.py --root "<HOUSE_SRC_ROOT>"        # 单次全量扫描
+  python beian_extract_worker.py --root "<HOUSE_SRC_ROOT>" --loop # 持续轮询新文件
   python beian_extract_worker.py --verify 3                  # 每份提取3次交叉比对
   python beian_extract_worker.py --retry                     # 重提 verify/rule 失败条
 """
@@ -120,7 +120,7 @@ def run(root, verify_n=2, pages=L.MAX_PAGES, retry=False, oneshot=True, loop_int
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--root", default=_cfg.CFG.get("root", r"W:/2020备案"), help="扫描根目录（网络盘）")
+    ap.add_argument("--root", default=_cfg.CFG.get("root", r"<HOUSE_SRC_ROOT>"), help="扫描根目录（网络盘）")
     ap.add_argument("--verify", type=int, default=2, help="每份提取次数做一致性比对")
     ap.add_argument("--pages", type=int, default=L.MAX_PAGES)
     ap.add_argument("--retry", action="store_true", help="重提 verify/rule 失败条")

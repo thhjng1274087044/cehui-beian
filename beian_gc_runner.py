@@ -41,8 +41,8 @@ LOG_FILE = os.path.join(HERE, "beian_gc_fill.log")
 
 # V 盘合同归档根（只扫这两年的子目录）
 V_ROOTS = [
-    r"V:\2、合同类归档\1、新大陆测绘合同归档\2025年",
-    r"V:\2、合同类归档\1、新大陆测绘合同归档\2026年",
+    r"<ENG_CONTRACT_SRC_ROOT>\2025年",
+    r"<ENG_CONTRACT_SRC_ROOT>\2026年",
 ]
 
 QUEUE_READY = "待上传(可传)"

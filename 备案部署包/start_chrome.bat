@@ -37,7 +37,7 @@ goto done
 :done
 echo.
 echo  下一步：在这个 Chrome 窗口里人工登录
-echo    账号 XDL13858623456
+echo    账号 <PLATFORM_ACCOUNT>
 echo    密码 + 图形验证码必须手输，脚本不代填
 echo.
 echo  登录完成后回到本窗口按任意键，自动做一次登录状态自检。
