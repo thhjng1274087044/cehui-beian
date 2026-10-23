@@ -1,0 +1,27 @@
+{
+  "_说明": "部署配置文件。所有路径若写相对路径，均相对于本文件所在目录（部署包根目录）。改完此文件即生效，无需改任何 .py 源码。服务器上通常只需确认 chrome_path / cdp_url 两项。",
+
+  "root": "W:/2020备案",
+
+  "ledger": "beian_records.json",
+  "xlsx": "beian_records.xlsx",
+
+  "cache": ".pdf_cache",
+
+  "browser_profile": "browser_profile_beian",
+
+  "beian_url": "https://hyjg.zrzyt.zj.gov.cn/main.htm",
+  "cdp_url": "http://localhost:9333",
+  "chrome_path": "C:/Program Files/Google/Chrome/Application/chrome.exe",
+
+  "year_roots": [
+    "W:/2020备案/2024年备案",
+    "W:/2020备案/2025年备案",
+    "W:/2020备案/2026年备案"
+  ],
+
+  "legacy_cache_root": "E:/网站备案/.pdf_cache",
+
+  "login_user": "",
+  "login_pass": ""
+}

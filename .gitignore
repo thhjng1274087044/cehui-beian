@@ -1,0 +1,75 @@
+# ===================== 测绘备案自动化 · Git 忽略规则 =====================
+# 本仓库只提交「源码 + 文档 + 规则」。以下全部排除，绝不入库。
+
+# ---- 客户数据 / 缓存 / 台账（含 PII，禁止上传）----
+.pdf_cache/
+beian_records.json
+beian_records.xlsx
+beian_records_gold.json
+beian_upload_log.json
+beian_progress.json
+beian_skip_names.json
+工程备案_精修.csv
+工程备案_全量草稿.csv
+工程备案_提取草稿.csv
+工程备案_子项映射表_待确认.csv
+beian_contract_fix_log.json
+*.xls
+*.xlsx
+_reg.xlsx
+_vol.xlsx
+_s*.pdf
+_sample.pdf
+_gc_ocr_cache.json
+_gc_ocr_pages.json
+_gc_pdf_index.json
+_gc_subitem.json
+_gc_subitem_v2.json
+_gc_layer_report.json
+_extract_result.json
+_verify_all.json
+_v2025_list.txt
+_v2026_list.txt
+_baidu_queue.txt
+_datefix_log.txt
+
+# ---- 日志 ----
+*.log
+beian_fill_2026.log
+beian_fill_2026_resume.log
+
+# ---- 调试 / 探查脚本（其中 _fill_login.py 含明文密码，严禁入库）----
+_*.py
+beian_dbg_*.py
+beian_test_*.py
+beian_probe_*.py
+beian_diag.py
+beian_clear_dialogs.py
+beian_debug_projtype.py
+
+# ---- 截图 / 图片 ----
+*.png
+*.jpg
+
+# ---- 与本项目的无关对话遗留（D 盘清理 / ZYF 主机发现 / 打印机探测等）----
+D盘清理*
+D盘扫描*
+disk_cleanup*
+disk_scan*
+scan_zyf*
+enum_shares_rpc*
+map_zyf*
+probe_shares*
+_printer_*
+温岭现代农业*
+
+# ---- 打包 / 环境 / 浏览器登录态 ----
+*.zip
+*.bak*
+.workbuddy/
+browser_profile/
+browser_profile_beian/
+generated-images/
+__pycache__/
+*.pyc
+*.lock

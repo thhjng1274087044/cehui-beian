@@ -1,0 +1,10 @@
+# beian project runtime dependencies (Windows Server)
+# Python 3.10+; dev machine validated on 3.13.14
+# install: pip install -r requirements.txt
+# scripts connect to local Chrome via CDP; no need for playwright bundled browser, so no 'playwright install' required
+# NOTE: keep this file ASCII-only. Chinese comments cause pip UnicodeDecodeError (gbk) on Chinese Windows.
+
+playwright>=1.40
+PyMuPDF>=1.23
+openpyxl>=3.1
+pdfplumber>=0.11
