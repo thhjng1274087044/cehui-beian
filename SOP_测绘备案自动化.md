@@ -3,7 +3,7 @@
 > **版本**：v1.0 · 编制日期 2026-10-23
 > **目标站**：浙江省测绘地理信息综合监管服务平台 `https://hyjg.zrzyt.zj.gov.cn/main.htm`
 > **适用对象**：操作人员（需人工完成登录与掉线重登）、维护人员（脚本与数据）
-> **两条业务线**：房产备案（已端到端跑通，在传 2026 年）；工程备案（数据/映射就绪，runner 与端到端验证待补）
+> **两条业务线**：房产备案（已端到端跑通，在传 2026 年）；工程备案（数据/映射就绪；`beian_gc_runner.py` 队列驱动代码已存在，缺口是端到端真机从未跑通，尤其 `complete_via_modify` 修改页附件链）
 > **源码仓库（公开）**：https://github.com/thhjng1274087044/cehui-beian
 
 ---
@@ -47,7 +47,7 @@
 | 业务线 | 台账（权威） | 运行脚本位置 | 状态 |
 |---|---|---|---|
 | **房产备案** | `beian_records.json`（2561 条）/ `beian_records.xlsx` | `E:\网站备案\备案部署包\`（离线包核心） | ✅ 已端到端跑通，在传 2026 年 |
-| **工程备案** | `工程备案_精修.csv`（309 行，43 列） | `E:\网站备案\` 根目录（`beian_gc_*` 系列） | ⚠️ 数据/映射就绪，缺 runner 与端到端验证 |
+| **工程备案** | `工程备案_精修.csv`（309 行，43 列） | `E:\网站备案\` 根目录（`beian_gc_*` 系列） | ⚠️ 数据/映射就绪；`beian_gc_runner.py` 已存在，缺口为端到端真机验证 + 修改页附件链 |
 
 ### 2.2 房产部署包关键文件（`E:\网站备案\备案部署包\`）
 
@@ -80,11 +80,11 @@
 | `合同项_平台子项对照表.html` | 合同项 → 平台子项对照 |
 | `_projtype_live.json` | 平台词表（15 大类，工程测量 11 子项） |
 | `beian_gc_ocr_full.py` | **全页 OCR**（带坐标，`_gc_ocr_pages.json`） |
-| `beian_gc_pipeline.py` / `beian_gc_runner.py` | 工程备案流水线 / 运行器（待补端到端） |
+| `beian_gc_pipeline.py` / `beian_gc_runner.py` | 工程备案流水线 / 运行器（代码完整，待端到端真机验证） |
 | `beian_gc_parse.py` / `beian_gc_refine.py` / `beian_gc_extract.py` | 解析 / 精修 / 提取 |
 | `beian_gc_category_map.py` / `beian_gc_subitem.py` | 类别映射 / 子项判定 |
 | `beian_gc_datefix.py` | 日期修复 |
-| `add_projtype_filled.py` | ⚠️ **旧口径脚本，勿运行**（会污染新结果三列） |
+| `add_projtype_filled.py` → 已改名 `_add_projtype_filled.py` | ⚠️ **旧口径脚本，勿运行**（会污染新结果三列）；已用 `_*.py` 规则屏蔽，不入库 |
 | `build_projtype_rows.py` / `dump_projtype.py` | 项目类型行构建 / 导出 |
 
 ---
@@ -196,7 +196,7 @@ pip install -r requirements.txt
 
 ## 6. 工程备案填写规则
 
-> ⚠️ 工程备案当前**尚未端到端跑通**（缺 runner、缺附件定位、缺端到端验证），以下为已定稿的业务规则，供维护与后续开发遵循。
+> ⚠️ 工程备案当前**尚未端到端跑通**：`beian_gc_runner.py`（队列驱动）与 `resolve_pdf`（按 CHHT/XDL token 回查 V 盘附件定位，已验证 92/95）**代码已存在且基本就绪**；核心缺口是**端到端真机从未跑通**，尤其 `complete_via_modify` 的修改页附件上传 + 人员分配 + 状态回写链未被真机验证。以下为已定稿的业务规则，供维护与后续开发遵循。
 
 ### 6.1 状态分类（309 行，2026-10-13 口径）
 | 状态 | 数量 | 处理 |
@@ -256,8 +256,8 @@ pip install -r requirements.txt
 ### 6.7 工程备案距离真实可用的缺口（2026-10-14 核查）
 | 缺口 | 现状 | 待办 |
 |---|---|---|
-| **runner** | `beian_fill.py --all` 只消费房产 ledger，无脚本把 `工程备案_精修.csv` 当队列驱动 | 写队列适配 + 回写「已上传」+ 断点续跑（掉线等待可复用 `is_logged_in/wait_for_login`） |
-| **附件定位** | `find_pdf_and_contracts` 房产专用；工程 `匹配PDF` 列只有文件名非路径（188/189 校验失败） | 须按 `CHHTYYYY-NNN` token 回查 V 盘（已验证 92/95 可解析，剩 3 条实盘缺件）；工程要传哪些附件待用户确认 |
+| **runner** | `beian_gc_runner.py` 已存在，以 `工程备案_精修.csv` 为队列驱动（含 `resolve_pdf` 回查 V 盘、`fill_one_record`+`complete_via_modify`、断点续跑、掉线等 `is_logged_in/wait_for_login`） | 缺口不在"有无"，而在**端到端真机未跑通**：`complete_via_modify` 修改页附件上传 + 人员分配 + 状态回写链从未被真机验证 |
+| **附件定位** | `resolve_pdf` 按 CHHT/XDL token 回查 V 盘已实现（V 盘当前可挂载），验证 92/95 可解析，剩 3 条实盘缺件（XDL-2025-064 / 2026-091 / 2026-092） | 工程要传哪些附件（合同 PDF？是否含成果/登记报告）待用户确认 |
 | **端到端验证** | 只做过"3 行项目类型填写回读正确" | 完整链路（新建→30+字段→多行→保存→修改页附件→返回→回写）无一次成功记录 |
 | **V 盘缺合同** | 缺 24 份合同 PDF（2026 年 073、085–095、129–136；2025 年 064、225） | 源头缺件，只能按台账类别兜底 |
 
@@ -316,8 +316,8 @@ python beian_fill.py --dry-run
 - 上传成功条目本地 PDF/合同已自动删除（`beian_ledger.py` 的 `BAIAN_NO_CLEAN` 开关：设置时不删缓存只标记 done，仅用于规避安全护栏的批量删，正常流程应让其删除防爆盘）。
 - 全部传完后，如需释放 `.pdf_cache`，**分批量**清理（避免触发环境级 safe-delete 护栏中断）。
 
-### 工程线启动（待 runner 就绪后）
-补齐第 6.7 章的 runner 后，预计命令形态类似 `python beian_gc_runner.py --all`，并复用同一 Chrome CDP 与登录态。具体以届时脚本为准。
+### 工程线启动（runner 代码已就绪，待端到端验证后）
+`python beian_gc_runner.py --all`（支持 `--dry-run`/`--limit=N`/`--only=合同号`/`--rebuild-index`），复用同一 Chrome CDP 与登录态。端到端验证重点：`complete_via_modify` 修改页附件上传 + 人员分配 + 状态回写是否真机跑通。
 
 ---
 
@@ -339,11 +339,11 @@ python beian_fill.py --dry-run
 
 1. **登录验证码必须人工**，无法全自动；约 4h 一次。
 2. **上传节奏慢**：模拟真人，单条约 100s，须分多天断点续跑。
-3. **工程备案未端到端跑通**：runner / 附件定位 / 端到端验证 三大缺口未补（见 6.7）。
+3. **工程备案未端到端跑通**：runner（`beian_gc_runner.py`）与附件定位（`resolve_pdf`）代码已存在，缺口是端到端真机验证 + `complete_via_modify` 修改页附件链（见 6.7）。
 4. **V 盘缺 24 份合同 PDF**：源头缺件，只能按台账类别兜底。
 5. **4 条映射待确认**（海绵城市 / 安全距离 / 勘测报告 / 总图）、11 行项目类型为空（缺 PDF 且台账类别空）。
 6. **部署包常年滞后于根目录**：2026-10-13 核查 `beian_fill.py`/`beian_form_mapper.py` 均为旧版、无工程能力；上线须先同步根目录版本。
-7. **`add_projtype_filled.py` 是旧口径脚本**，运行会污染 `项目类型_填报/项目类型_填报依据/项目类型_待核定` 三列，勿运行。
+7. **`_add_projtype_filled.py`（原 `add_projtype_filled.py`）是旧口径脚本**，运行会污染 `项目类型_填报/项目类型_填报依据/项目类型_待核定` 三列，勿运行；已改名并被 `.gitignore` 的 `_*.py` 屏蔽，不入库。
 
 ---
 

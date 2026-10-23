@@ -117,6 +117,50 @@ def load_json(name):
         return json.load(f)
 
 
+# ---------- 3.5 代码版本一致性（防静默填错） ----------
+def check_version():
+    """
+    2026-10-23 发现的静默错误：mapper 已把项目类型改成两级 "房产测绘/房产测绘"，
+    但本目录 beian_fill.py 若是 08-25 旧版，会用整串去做 has_text 匹配 -> 匹配 0 个
+    -> 超时 -> return False，而调用方丢弃返回值 -> 项目类型留空仍照常保存并记 done。
+
+    这里用两个可判定的信号交叉验证，不依赖日期：
+      A) 本目录 beian_fill.py 是否存在 _fill_one_cascader（新版才有）
+      B) mapper 的 FIXED_FIELDS["项目类型"] 是否含 "/"（两级值）
+    A 缺 + B 有两级 == 必错。
+    """
+    fill_py = os.path.join(HERE, "beian_fill.py")
+    mapper_py = os.path.join(HERE, "beian_form_mapper.py")
+
+    has_generic = False
+    try:
+        with io.open(fill_py, encoding="utf-8", errors="ignore") as f:
+            has_generic = "_fill_one_cascader" in f.read()
+    except Exception as e:
+        add("代码版本", False, "读不到 beian_fill.py：%s" % e)
+        return
+
+    two_level = False
+    try:
+        with io.open(mapper_py, encoding="utf-8", errors="ignore") as f:
+            src = f.read()
+        import re
+        m = re.search(r'"项目类型"\s*:\s*"([^"]*)"', src)
+        if m and "/" in m.group(1):
+            two_level = True
+    except Exception:
+        pass
+
+    if has_generic:
+        add("代码版本", True, "fill.py 含 _fill_one_cascader（新版），支持两级项目类型")
+    elif two_level:
+        add("代码版本", False,
+            "fill.py 是旧版（无 _fill_one_cascader），但 mapper 已给两级值 -> 项目类型会静默填错",
+            "把 ..\\beian_fill.py（根目录新版）复制到本目录，再 --limit=3 验证")
+    else:
+        add("代码版本", True, "fill.py 旧版 + mapper 单级值，两者匹配（但这套不含工程能力）")
+
+
 def check_ledger():
     try:
         ledger = load_json("beian_records.json")
@@ -172,6 +216,7 @@ def main():
         check_login()
     else:
         add("登录态", False, "跳过（Chrome 未启动）", "先双击 start_chrome.bat")
+    check_version()
     check_ledger()
 
     print()
